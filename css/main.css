@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+/*Aqui estaran todos los estilos de las distintas paginas del juego se separaran por un comenario
+que indique a que pagina corresponde y en donde termina*/
+
+/*Estilos del index*/
+.TituloJuego{
+    font-size: 66px;
+}
+
+.menuJuego{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/*Aqui terminan los estilos del index*/
