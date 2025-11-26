@@ -31,3 +31,22 @@ que indique a que pagina corresponde y en donde termina*/
 
 
 /*Aqui terminan los estilos del index*/
+
+/* Aqui empiezan los estilos de juego.html */
+
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#renderCanvas{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* aqui terminal los estilos de juego.html */
