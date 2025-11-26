@@ -5,6 +5,7 @@ export default class Departamento {
         this.crearSuelo();
         this.crearParedes();
         this.crearMuebles();
+        this.decorarInteriores();
     }
 
     crearSuelo() {
@@ -235,5 +236,46 @@ export default class Departamento {
                 }
             } 
         }
+    }
+
+    crearPisoHabitacion(nombreObjeto, nombreBaseTextura, ancho, largo, x, z, repeticion = 4) {
+        
+        const materialPiso = new BABYLON.PBRMaterial(nombreObjeto + "Mat", this.scene);
+        materialPiso.metallic = 0; 
+        materialPiso.roughness = 1;
+
+        const rutaBase = "../../Assets/mods/";
+      
+        materialPiso.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_color.jpg`, this.scene);
+        materialPiso.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_normal.jpg`, this.scene);
+        materialPiso.microSurfaceTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_rough.jpg`, this.scene);
+
+        [materialPiso.albedoTexture, materialPiso.bumpTexture, materialPiso.microSurfaceTexture].forEach(tex => {
+            tex.uScale = repeticion;
+            tex.vScale = repeticion;
+        });
+
+        const piso = BABYLON.MeshBuilder.CreateGround(nombreObjeto, {width: ancho, height: largo}, this.scene);
+        piso.material = materialPiso;
+        piso.position = new BABYLON.Vector3(x, 0.09, z);
+    }
+
+    paredesTextura(nombre, texturaNombre, ancho, alto, x, y, z, rotY) {
+        const materialPared = new BABYLON.StandardMaterial(nombre + "Mat", this.scene);
+        materialPared.diffuseTexture = new BABYLON.Texture("../Assets/Textures/" + texturaNombre, this.scene);
+        
+        const papel = BABYLON.MeshBuilder.CreatePlane(nombre, {width: ancho, height: alto}, this.scene);
+        papel.material = materialPared;
+
+        papel.position = new BABYLON.Vector3(x, y, z);
+        papel.rotation.y = rotY;
+    }
+
+    decorarInteriores() {
+        this.crearPisoHabitacion("pisoSala", "piso_maderaS", 24, 22, 12, -23);
+        this.crearPisoHabitacion("pisoCocina", "piso_maderaC", 31, 46, 9.5, 11);
+        this.crearPisoHabitacion("PisoCuarto", "piso_maderaH", 18, 34, -15, -17)
+        this.crearPisoHabitacion("complementoCuarto", "piso_maderaH", 6, 22, -3, -23)
+        this.crearPisoHabitacion("Baño", "piso_concretoB", 19, 16, -15.51, 8)
     }
 }
