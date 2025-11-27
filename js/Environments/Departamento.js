@@ -161,7 +161,7 @@ export default class Departamento {
         }
         rootCocina.dispose();
 
-        const resultadoComedor = await BABYLON.SceneLoader.ImportMeshAsync("", "../Assets/Models/", "Comedor.glb", this.scene);
+        const resultadoComedor = await BABYLON.SceneLoader.ImportMeshAsync("", "../Assets/Models/", "comedor.glb", this.scene);
         const rootComedor = resultadoComedor.meshes[0];
 
         const sketchfabComedor = rootComedor.getChildren().find(m => m.name === "Sketchfab_model");
@@ -242,7 +242,7 @@ export default class Departamento {
         materialPiso.metallic = 0; 
         materialPiso.roughness = 1;
 
-        const rutaBase = "../../Assets/mods/";
+        const rutaBase = "../Assets/mods/";
       
         materialPiso.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_color.jpg`, this.scene);
         materialPiso.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_normal.jpg`, this.scene);
@@ -265,7 +265,7 @@ export default class Departamento {
         materialPared.metallic = 0; 
         materialPared.roughness = 1;
 
-        const rutaBase = "../../Assets/mods/";
+        const rutaBase = "../Assets/mods/";
 
         materialPared.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_color.jpg`, this.scene);
         // materialPared.albedoTexture.level = 2
