@@ -8,7 +8,7 @@ const scene = new BABYLON.Scene(engine);
 
 // Luz y camara temporales para trabjar el departamento
 const luz = new BABYLON.HemisphericLight("Luz", new BABYLON.Vector3(0,1,0), scene);
-luz.intensity = 0.4
+luz.intensity = 1.5
 const camara = new BABYLON.ArcRotateCamera("Camarita", 0, 0, 20, new BABYLON.Vector3.Zero(), scene);
 camara.attachControl(canvas, true)
 
