@@ -11,57 +11,86 @@ export default class Departamento {
     crearSuelo() {
 
         const suelo = new BABYLON.MeshBuilder.CreateBox("suelito", {width: 50, height: 70, depth: 0.1}, this.scene);
-        const ColorSuelo = new BABYLON.StandardMaterial("ColorSuelo", this.scene)
-        ColorSuelo.diffuseColor = new BABYLON.Color3(0.5, 0.2, 0.8)
-        suelo.material = ColorSuelo;
         suelo.rotation.x = Math.PI / 2
     };
 
     crearParedes() {
+        const materialMuros = new BABYLON.PBRMaterial("materialMuros", this.scene);
+        materialMuros.metallic = 0;
+        materialMuros.roughness = 1;
+
+        const rutaBase = "../Assets/mods/"; // O "../Assets/Textures/" según donde lo tengas
+        const nombreTextura = "pared_blanca"; // Tu archivo base
+
+        // Cargamos las texturas
+        materialMuros.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_color.jpg`, this.scene);
+        materialMuros.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_normal.jpg`, this.scene);
+        materialMuros.microSurfaceTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_rough.jpg`, this.scene);
+
+        // Truco: Escalar la textura automáticamente para que no se vea estirada en paredes largas
+        // (Esto es una aproximación, si quieres perfección hay que ajustar por pared)
+        materialMuros.albedoTexture.uScale = 10; 
+        materialMuros.albedoTexture.vScale = 2;
+        materialMuros.bumpTexture.uScale = 10; 
+        materialMuros.bumpTexture.vScale = 2;
         
-         const paredOeste = new BABYLON.MeshBuilder.CreateBox("paredsitaOeste", {width: 50, height: 10, depth: 1}, this.scene);
+        const paredOeste = new BABYLON.MeshBuilder.CreateBox("paredsitaOeste", {width: 50, height: 10, depth: 1}, this.scene);
         paredOeste.position.y = 5
         paredOeste.position.z = -34.5
+        paredOeste.material = materialMuros
 
         const paredEste = new BABYLON.MeshBuilder.CreateBox("paredsitaEste", {width: 50, height: 10, depth: 1}, this.scene);
         paredEste.position.y = 5;
         paredEste.position.z = 34.5
+        paredEste.material = materialMuros
 
         const paredNorte = new BABYLON.MeshBuilder.CreateBox("paredsitaNorte", {width: 70, height: 10, depth: 1}, this.scene);
         paredNorte.position.y = 5;
         paredNorte.rotation.y = Math.PI / 2;
         paredNorte.position.x = -24.5 
+        paredNorte.material = materialMuros
 
         const paredSur = new BABYLON.MeshBuilder.CreateBox("paredsitaSur", {width: 70, height: 10, depth: 1}, this.scene);
         paredSur.position.y = 5;
         paredSur.rotation.y = Math.PI / 2
         paredSur.position.x = 24.5
+        paredSur.material = materialMuros
 
         const paredSala = new BABYLON.MeshBuilder.CreateBox("paredSala", {width: 22, height: 10, depth: 1}, this.scene)
         paredSala.position.y = 5
         paredSala.rotation.y = Math.PI / 2
         paredSala.position.z = -23
+        paredSala.material = materialMuros
 
         const paredCentro = new BABYLON.MeshBuilder.CreateBox("paredCentro0", {width: 30, height: 10, depth: 1}, this.scene);
         paredCentro.position.y = 5
         paredCentro.rotation.y = Math.PI / 2
         paredCentro.position.x = -6.5
         paredCentro.position.z = 20
+        paredCentro.material = materialMuros
 
         const paredCentroC = new BABYLON.MeshBuilder.CreateBox("paredCentroC", {width: 14, height: 10, depth: 1}, this.scene);
         paredCentroC.position.y = 5
         paredCentroC.rotation.y = Math.PI / 2
         paredCentroC.position.x = -6.5
         paredCentroC.position.z = -6.5
+        paredCentroC.material = materialMuros
 
         const paredBaño = new BABYLON.MeshBuilder.CreateBox("paredeBaño", {width: 18, height: 10, depth: 1}, this.scene);
         paredBaño.position.y = 5
         paredBaño.position.x = -15
         paredBaño.position.z = 16
+        paredBaño.material = materialMuros
 
         const paredCuarto = new BABYLON.MeshBuilder.CreateBox("paredCuarto", {width: 18, height: 10, depth: 1}, this.scene)
         paredCuarto.position.y = 5
         paredCuarto.position.x = -15
+        paredCuarto.material = materialMuros
+
+        const paredes = [paredOeste, paredEste, paredNorte, paredSur, paredSala, paredCentro, paredCentroC, paredBaño, paredCuarto];
+        paredes.forEach(pared => {
+            pared.checkCollisions = true;
+        });
     };
 
     async cargarObjeto(nombreArchivo, x, y, z, rotY, escala) {
@@ -255,37 +284,8 @@ export default class Departamento {
 
         const piso = BABYLON.MeshBuilder.CreateGround(nombreObjeto, {width: ancho, height: largo}, this.scene);
         piso.material = materialPiso;
+        piso.checkCollisions = true
         piso.position = new BABYLON.Vector3(x, 0.09, z);
-    }
-
-    crearParedHabitacion(nombre, nombreBaseTextura, ancho, alto, x, y, z, rotY, repeticion = 1, colorTint) {
-        
-
-        const materialPared = new BABYLON.PBRMaterial(nombre + "Mat", this.scene);
-        materialPared.metallic = 0; 
-        materialPared.roughness = 1;
-
-        const rutaBase = "../Assets/mods/";
-
-        materialPared.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_color.jpg`, this.scene);
-        // materialPared.albedoTexture.level = 2
-        materialPared.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_normal.jpg`, this.scene);
-        materialPared.microSurfaceTexture = new BABYLON.Texture(`${rutaBase}${nombreBaseTextura}_rough.jpg`, this.scene);
-
-        if (colorTint) {
-            materialPared.albedoColor = colorTint;
-        }
-
-        [materialPared.albedoTexture, materialPared.bumpTexture, materialPared.microSurfaceTexture].forEach(tex => {
-            tex.uScale = repeticion;
-            tex.vScale = repeticion;
-        });
-
-        const pared = BABYLON.MeshBuilder.CreatePlane(nombre, {width: ancho, height: alto}, this.scene);
-        pared.material = materialPared;
-
-        pared.position = new BABYLON.Vector3(x, y, z);
-        pared.rotation.y = rotY;
     }
 
     decorarInteriores() {
@@ -295,23 +295,5 @@ export default class Departamento {
         this.crearPisoHabitacion("complementoCuarto", "piso_maderaH", 6, 22, -3, -23)
         this.crearPisoHabitacion("Baño", "piso_concretoB", 19, 16, -15.51, 8)
 
-        //Paredes para el marco de la habitacion
-        this.crearParedHabitacion("TexturaParedOeste","pared_blanca", 50, 10, 0, 5, -33.99, Math.PI, 4, null)
-        this.crearParedHabitacion("TexturaParedEste","pared_blanca", 50, 10, 0, 5, 33.99, 0, 4, null)
-        this.crearParedHabitacion("TexturaParedNorte","pared_blanca", 70, 10, -24, 5, 0, Math.PI /-2, 4, null)
-        this.crearParedHabitacion("TexturaParedSur","pared_blanca", 70, 10, 23.99, 5, 0, Math.PI /2, 4, null)
-
-        this.crearParedHabitacion("TexturaParedHabitacionEste","pared_blanca", 18, 10, -15, 5, -0.5, 0, 4, null)
-        this.crearParedHabitacion("TexturaParedBañoOEste","pared_blanca", 18, 10, -15, 5, 0.5, Math.PI, 4, null)
-        this.crearParedHabitacion("TexturaParedHabitacionEste","pared_blanca", 18, 10, -15, 5, -2.31, 0, 4, null)
-
-        this.crearParedHabitacion("TexturaParedHabitacionSurPasillo","pared_blanca", 13, 10, -7.01, 5, -7, Math.PI /2, 4, null)
-        this.crearParedHabitacion("TexturaParedSurPasillo","pared_blanca", 14, 10, -6, 5, -6.5, Math.PI /-2, 4, null)
-
-        this.crearParedHabitacion("TexturaParedCentroVistaCocina", "pared_blanca", 30, 10, -6, 5, 20, Math.PI / -2, null)
-        this.crearParedHabitacion("TexturaParedCentroVistaCocina", "pared_blanca", 30, 10, -7, 5, 20, Math.PI / 2, null)
-
-        this.crearParedHabitacion("TexturaParedHabitacionSur","pared_blanca", 23, 10, -0.51, 5, -23.5, Math.PI /2, 4, null)
-        this.crearParedHabitacion("TexturaParedSalaNorte","pared_blanca", 23, 10, 0.51, 5, -23.5, Math.PI / -2, 4, null)
     }
 }
