@@ -4,6 +4,9 @@ export default class Jugador{
         this.canvas = canvas
 
         this.crearCamaraPrimeraPersona();
+        this.scene.registerBeforeRender(() => {
+            this.detectarObjeto();
+        });
     }
 
     crearCamaraPrimeraPersona() {
@@ -18,5 +21,14 @@ export default class Jugador{
 
         this.camera = camera
         this.camera.attachControl(this.canvas, true);
+    }
+
+    detectarObjeto(){
+        const ray = this.camera.getForwardRay(3)
+        const hit = this.scene.pickWithRay(ray)
+
+        if (hit.hit === true) {
+            console.log(hit.pickedMesh.name)
+        }
     }
 }
