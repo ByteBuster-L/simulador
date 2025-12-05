@@ -1,34 +1,59 @@
-export default class Jugador{
-    constructor(scene, canvas){
-        this.scene = scene
-        this.canvas = canvas
+export default class Jugador {
+    constructor(scene, canvas, GameManager) {
+        this.scene = scene;
+        this.canvas = canvas;
+        this.GameManager = GameManager
 
+        // 1. Crear la cámara
         this.crearCamaraPrimeraPersona();
+
+        // 2. Configurar el "Rayo" para interactuar (lo que hicimos antes)
         this.scene.registerBeforeRender(() => {
-            this.detectarObjeto();
+            // Aquí podrías llamar a tu función de detectar si la necesitas
+            // this.detectarObjeto(); 
         });
+
+        this.scene.onPointerDown = (evt) => {
+            if (evt.button === 0) this.intentarInteractuar();
+        };
     }
 
     crearCamaraPrimeraPersona() {
-        const camera = new BABYLON.UniversalCamera("Camara", new BABYLON.Vector3(0, 7, 0), this.scene)
-        camera.checkCollisions = true
-        camera.minZ = 0.1
+        const camara = new BABYLON.UniversalCamera("camaraJugador", new BABYLON.Vector3(10, 7, 0), this.scene);
 
-        camera.keysDown.push(83);
-        camera.keysLeft.push(65);
-        camera.keysUp.push(87);
-        camera.keysRight.push(68);
+        camara.attachControl(this.canvas, true);
+        camara.speed = 3.0;
+        camara.angularSensibility = 1000; 
+        
+        camara.inertia = 0.1;
 
-        this.camera = camera
-        this.camera.attachControl(this.canvas, true);
+        // --- TECLAS WASD ---
+        camara.keysUp = [87];    // W
+        camara.keysDown = [83];  // S
+        camara.keysLeft = [65];  // A
+        camara.keysRight = [68]; // D
+
+        // fisica
+        camara.checkCollisions = true; 
+        camara.applyGravity = true;    
+
+        camara.ellipsoid = new BABYLON.Vector3(1, 2.5, 1); 
+
+        // Evitar recortes visuales
+        camara.minZ = 0.1;
+
+        this.camera = camara;
     }
 
-    detectarObjeto(){
-        const ray = this.camera.getForwardRay(3)
-        const hit = this.scene.pickWithRay(ray)
+    intentarInteractuar() {
+        const ray = this.camera.getForwardRay(4); // Rayo de 3 metros
+        const hit = this.scene.pickWithRay(ray);
 
-        if (hit.hit === true) {
-            console.log(hit.pickedMesh.name)
+        if (hit.hit && hit.pickedMesh) {
+            console.log("Golpeé a: " + hit.pickedMesh.name);
+            if (hit.pickedMesh.metadata && hit.pickedMesh.metadata.interactable) {
+                hit.pickedMesh.metadata.interactable.interactuar();
+            }
         }
     }
 }

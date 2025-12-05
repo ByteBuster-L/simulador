@@ -1,6 +1,9 @@
+import Grifo from "../interacciones/Grifos.js";
+import Luz from "../interacciones/Luz.js";
 export default class Departamento {
-    constructor(scene) {
+    constructor(scene, gameManager) {
         this.scene = scene;
+        this.gameManager = gameManager
 
         this.crearSuelo();
         this.crearParedes();
@@ -19,16 +22,13 @@ export default class Departamento {
         materialMuros.metallic = 0;
         materialMuros.roughness = 1;
 
-        const rutaBase = "../Assets/mods/"; // O "../Assets/Textures/" según donde lo tengas
-        const nombreTextura = "pared_blanca"; // Tu archivo base
+        const rutaBase = "../Assets/mods/"; 
+        const nombreTextura = "pared_blanca"; 
 
-        // Cargamos las texturas
         materialMuros.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_color.jpg`, this.scene);
         materialMuros.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_normal.jpg`, this.scene);
         materialMuros.microSurfaceTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_rough.jpg`, this.scene);
 
-        // Truco: Escalar la textura automáticamente para que no se vea estirada en paredes largas
-        // (Esto es una aproximación, si quieres perfección hay que ajustar por pared)
         materialMuros.albedoTexture.uScale = 10; 
         materialMuros.albedoTexture.vScale = 2;
         materialMuros.bumpTexture.uScale = 10; 
@@ -94,7 +94,6 @@ export default class Departamento {
     };
 
     async cargarObjeto(nombreArchivo, x, y, z, rotY, escala) {
-        //Esta es para los objetos individuales ya que los paquetes requieren de desglosar la ruta
         const resultado = await BABYLON.SceneLoader.ImportMeshAsync(
             "",
             "../Assets/Models/",
@@ -122,8 +121,6 @@ export default class Departamento {
         )
 
         const configurarMueble = (nombreMueble, x, y, z, rotY, escala) => {
-            /*Esta funcion nos ayuda a no estar guardando cada mueble en una variable diferente asi solo la guardamos en una
-            y vamos configurando con el nombre y pasando las medidas */
             let mueble = resultado.meshes.find(mesh => mesh.name === nombreMueble);
             
             if(!mueble){
@@ -147,7 +144,17 @@ export default class Departamento {
         configurarMueble("TinyLiving_TheModernDeskLamp_23", 22.3, 3, -18, 0, 4)
 
         this.cargarObjeto("estufa.glb", 20.3, 3.5, 23.5, Math.PI / -2, 1.5);
-        this.cargarObjeto("grifo.glb", 22, 4.52, 15.2, Math.PI / -2, 2);
+        await this.cargarObjeto("grifo.glb", 22, 4.52, 15.2, Math.PI / -2, 2);
+
+        // 2. Verificación de seguridad
+        if (this.scene.getMeshByName("grifo.glb")) {
+            console.log("¡Conectando grifo de cocina!");
+            // 3. UNA SOLA creación del grifo
+            new Grifo("grifo.glb", this.scene, this.gameManager);
+        } else {
+            console.error("ERROR CRÍTICO: No encuentro 'grifo.glb'. Nombres en escena:");
+            console.log(this.scene.meshes.map(m => m.name));
+        }
         this.cargarObjeto("alacena.glb", 23.1, 0, -4, Math.PI/-2, 0.12)
         this.cargarObjeto("plantita.glb", 2, 0, -29, 0, 4)
         this.cargarObjeto("plantita2.glb", 2, 0, -18, 0, 4)
@@ -160,6 +167,55 @@ export default class Departamento {
 
         const rootNode = resultado.meshes[0];
 
+    let lamparaMolde = resultado.meshes.find(m => m.name === "TinyLiving_DonTrippLightFixture_19");
+    if (!lamparaMolde) {
+        lamparaMolde = resultado.transformNodes.find(n => n.name === "TinyLiving_DonTrippLightFixture_19");
+    }
+
+    if (lamparaMolde) {
+        lamparaMolde.setParent(null);          
+        lamparaMolde.rotationQuaternion = null;
+        lamparaMolde.setEnabled(false);
+
+        const instalarLuz = (nombre, xLuz, yLuz, zLuz, xBoton, yBoton, zBoton, rotY) => {
+            
+            const nuevaLampara = lamparaMolde.clone(nombre + "_Visual");
+            nuevaLampara.setEnabled(true); 
+            nuevaLampara.position = new BABYLON.Vector3(xLuz, yLuz, zLuz);
+            nuevaLampara.scaling = new BABYLON.Vector3(3, 3, 3); 
+
+            const interruptor = BABYLON.MeshBuilder.CreateBox(nombre + "_Switch", {width: 0.5, height: 0.5, depth: 0.1}, this.scene);
+            interruptor.position = new BABYLON.Vector3(xBoton, yBoton, zBoton);
+            interruptor.rotation.y = rotY
+            
+            const matBoton = new BABYLON.StandardMaterial(nombre + "_Mat", this.scene);
+            matBoton.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            interruptor.material = matBoton;
+
+            if (typeof Luz !== 'undefined' || this.scene.getMeshByName(interruptor.name)) {
+                 const logicaLuz = new Luz(interruptor.name, this.scene, this.gameManager);
+
+                 if (logicaLuz.lightSource) {
+                     logicaLuz.lightSource.position = new BABYLON.Vector3(xLuz, yLuz - 4, zLuz);
+                 }
+            }
+        };
+
+        instalarLuz("LuzCuarto", -15, 10, -20, -10, 5, -34,0); 
+
+        instalarLuz("LuzSala", 10, 10, -22, 20, 5, -34,0);
+
+        instalarLuz("LuzCocina", 7, 10, 21, 8, 5, 30, 0);
+
+        instalarLuz("LuzBaño", -15, 10, 8, -11, 5, 1, 0);
+
+        instalarLuz("LuzCocina2", 7, 10, 5, 22, 5, 5, Math.PI / 2);
+
+        console.log("¡Sistema de luces instalado!");
+
+    } else {
+        console.error(" No encontré la lámpara 'TinyLiving_DonTrippLightFixture_19'");
+    }
         rootNode.dispose();
     }
 
@@ -253,6 +309,10 @@ export default class Departamento {
                     configurarItem("Plane.012_53", -15, 4.5, 0.72, 0, 0, 0, 4.9)//Toalla
                     configurarItem("Cube.179_37", -8, 4, 11.5, 0, Math.PI / -2, 0, 4.9)//lavamanos
                     configurarItem("Plane.002_52", -7.3, 5.6, 11.5, 0, Math.PI / -2, 0, 4.9)// llave lavamanos
+                    if (this.scene.getMeshByName("Object_118")) {
+                        console.log(" Conectando grifo del baño...");
+                        new Grifo("Object_118", this.scene, this.gameManager);
+                    }
                     configurarItem("Cylinder.006_45", -7.2, 5.5, 12.2, Math.PI / 2, Math.PI / -2, 0, 4.9)//portavasos
                     configurarItem("Cylinder.016_49", -7.3, 5.5, 12.2, 0, 0, 0, 4.9)//vaso
                     configurarItem("Cylinder.015_48", -7.2, 5.5, 10.7, Math.PI / 2, Math.PI / -2, 0, 4.9) //porta jabon o algo asi

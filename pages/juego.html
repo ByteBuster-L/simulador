@@ -11,7 +11,26 @@
 
     <canvas id="renderCanvas"></canvas>
 
+    <div style="position: absolute; top: 10px; right: 50%; transform: translateX(50%); background: rgba(0,0,0,0.5); color: white; padding: 10px 20px; font-family: Arial; font-size: 24px; border-radius: 20px; font-weight: bold;">
+    <span id="reloj-juego">03:00</span>
+    </div>
+
+    <div id="factura-modal" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: black; padding: 30px; font-family: Arial; border-radius: 15px; box-shadow: 0 0 20px rgba(0,0,0,0.5); text-align: center; min-width: 300px;">
+        <h2 style="color: #2c3e50;">RESUMEN DEL DÍA</h2>
+        <hr>
+        <div style="font-size: 18px; margin: 20px 0; text-align: left;">
+            <p>Luz Consumida: <b id="info-luz">0.00 kW</b></p>
+            <p>Agua Consumida: <b id="info-agua">0.0 L</b></p>
+        </div>
+        <hr>
+        <h1 style="color: #c0392b;">TOTAL A PAGAR: <span id="info-dinero">$0.00</span></h1>
+        <br>
+        <button onclick="location.reload()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente Día (Reiniciar)</button>
+    </div>
+
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
     <script type="module" src="../js/main.js"></script>
+    <script src="../babylon/babylon.js"></script>
+    <script src="../babylon/babylonjs.loaders.min.js"></script>
 </body>
 </html>
