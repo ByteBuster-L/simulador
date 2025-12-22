@@ -6,6 +6,7 @@ export default class Departamento {
         this.gameManager = gameManager
 
         this.crearSuelo();
+        this.crearTecho();
         this.crearParedes();
         this.crearMuebles();
         this.decorarInteriores();
@@ -16,6 +17,29 @@ export default class Departamento {
         const suelo = new BABYLON.MeshBuilder.CreateBox("suelito", {width: 50, height: 70, depth: 0.1}, this.scene);
         suelo.rotation.x = Math.PI / 2
     };
+
+    crearTecho(){
+        const Materialtecho = new BABYLON.PBRMaterial("materialTecho", this.scene);
+        Materialtecho.metallic = 0;
+        Materialtecho.roughness = 1;
+
+        const rutaBase = "../Assets/mods/"; 
+        const nombreTextura = "pared_blanca";
+
+        Materialtecho.albedoTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_color.jpg`, this.scene);
+        Materialtecho.bumpTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_normal.jpg`, this.scene);
+        Materialtecho.microSurfaceTexture = new BABYLON.Texture(`${rutaBase}${nombreTextura}_rough.jpg`, this.scene);
+        Materialtecho.albedoTexture.uScale = 10; 
+        Materialtecho.albedoTexture.vScale = 2;
+        Materialtecho.bumpTexture.uScale = 10; 
+        Materialtecho.bumpTexture.vScale = 2;
+
+        const techo =  new BABYLON.MeshBuilder.CreateBox("techo", {width: 50, height: 70, depth: 0.1}, this.scene)
+        console.log(`Techo creado con exito`)
+        techo.position.y = 10
+        techo.rotation.x = Math.PI / 2;
+        techo.material = Materialtecho;
+    }
 
     crearParedes() {
         const materialMuros = new BABYLON.PBRMaterial("materialMuros", this.scene);
@@ -354,6 +378,5 @@ export default class Departamento {
         this.crearPisoHabitacion("PisoCuarto", "piso_maderaH", 18, 34, -15, -17)
         this.crearPisoHabitacion("complementoCuarto", "piso_maderaH", 6, 22, -3, -23)
         this.crearPisoHabitacion("Baño", "piso_concretoB", 19, 16, -15.51, 8)
-
     }
 }
