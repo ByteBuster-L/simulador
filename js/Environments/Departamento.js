@@ -5,6 +5,8 @@ export default class Departamento {
         this.scene = scene;
         this.gameManager = gameManager
 
+        this.interactuables = [];
+
         this.crearSuelo();
         this.crearTecho();
         this.crearParedes();
@@ -172,9 +174,8 @@ export default class Departamento {
 
         // 2. Verificación de seguridad
         if (this.scene.getMeshByName("grifo.glb")) {
-            console.log("¡Conectando grifo de cocina!");
-            // 3. UNA SOLA creación del grifo
-            new Grifo("grifo.glb", this.scene, this.gameManager);
+            //creacion de grifo y insercion a array de interactuables
+            this.interactuables.push(new Grifo("grifo.glb", this.scene, this.gameManager));
         } else {
             console.error("ERROR CRÍTICO: No encuentro 'grifo.glb'. Nombres en escena:");
             console.log(this.scene.meshes.map(m => m.name));
@@ -218,6 +219,8 @@ export default class Departamento {
 
             if (typeof Luz !== 'undefined' || this.scene.getMeshByName(interruptor.name)) {
                  const logicaLuz = new Luz(interruptor.name, this.scene, this.gameManager);
+
+                 this.interactuables.push(logicaLuz);
 
                  if (logicaLuz.lightSource) {
                      logicaLuz.lightSource.position = new BABYLON.Vector3(xLuz, yLuz - 4, zLuz);
@@ -334,8 +337,8 @@ export default class Departamento {
                     configurarItem("Cube.179_37", -8, 4, 11.5, 0, Math.PI / -2, 0, 4.9)//lavamanos
                     configurarItem("Plane.002_52", -7.3, 5.6, 11.5, 0, Math.PI / -2, 0, 4.9)// llave lavamanos
                     if (this.scene.getMeshByName("Object_118")) {
-                        console.log(" Conectando grifo del baño...");
-                        new Grifo("Object_118", this.scene, this.gameManager);
+                        //Grifo del baño y tambien lo insertamos en el array de los interactuables
+                        this.interactuables.push(new Grifo("Object_118", this.scene, this.gameManager));
                     }
                     configurarItem("Cylinder.006_45", -7.2, 5.5, 12.2, Math.PI / 2, Math.PI / -2, 0, 4.9)//portavasos
                     configurarItem("Cylinder.016_49", -7.3, 5.5, 12.2, 0, 0, 0, 4.9)//vaso

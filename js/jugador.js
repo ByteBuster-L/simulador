@@ -16,6 +16,13 @@ export default class Jugador {
         this.scene.onPointerDown = (evt) => {
             if (evt.button === 0) this.intentarInteractuar();
         };
+
+        window.addEventListener("keydown", (evt) => {
+            const letra = evt.key;
+            if(letra == "e" || letra == "E"){
+                this.intentarInteractuar();
+            }
+        })
     }
 
     crearCamaraPrimeraPersona() {
@@ -42,18 +49,19 @@ export default class Jugador {
         // Evitar recortes visuales
         camara.minZ = 0.1;
 
+        this.canvas.addEventListener("click", () => {
+            this.canvas.requestPointerLock();
+        })
+
         this.camera = camara;
     }
 
     intentarInteractuar() {
-        const ray = this.camera.getForwardRay(4); // Rayo de 3 metros
-        const hit = this.scene.pickWithRay(ray);
-
-        if (hit.hit && hit.pickedMesh) {
-            console.log("Golpeé a: " + hit.pickedMesh.name);
-            if (hit.pickedMesh.metadata && hit.pickedMesh.metadata.interactable) {
-                hit.pickedMesh.metadata.interactable.interactuar();
+        this.departamento.interactuables.forEach(objeto => {
+            const distancia = BABYLON.Vector3.Distance(this.camera.position, objeto.mesh.position)
+            if(distancia <= 5){
+                objeto.interactuar()
             }
-        }
+        });
     }
 }
