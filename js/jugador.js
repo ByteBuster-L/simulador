@@ -26,7 +26,7 @@ export default class Jugador {
     }
 
     crearCamaraPrimeraPersona() {
-        const camara = new BABYLON.UniversalCamera("camaraJugador", new BABYLON.Vector3(10, 7, 0), this.scene);
+        const camara = new BABYLON.UniversalCamera("camaraJugador", new BABYLON.Vector3(10, 4, 0), this.scene);
 
         camara.attachControl(this.canvas, true);
         camara.speed = 3.0;
@@ -45,6 +45,7 @@ export default class Jugador {
         camara.applyGravity = true;    
 
         camara.ellipsoid = new BABYLON.Vector3(1, 2.5, 1); 
+        camara.ellipsoidOffset = new BABYLON.Vector3(0, -1.5, 1)
 
         // Evitar recortes visuales
         camara.minZ = 0.1;
