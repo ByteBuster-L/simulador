@@ -16,9 +16,11 @@ luz.intensity = 0.001;
 
 const gameManager = new GameManager(); 
 
-const jugador = new Jugador(scene, canvas);
+const jugador = new Jugador(scene, canvas, gameManager);
 
 const departamento = new Departamento(scene, gameManager);
+
+jugador.departamento = departamento;
 
 engine.runRenderLoop( function() {
     scene.render();

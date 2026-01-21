@@ -16,10 +16,17 @@ export default class Jugador {
         this.scene.onPointerDown = (evt) => {
             if (evt.button === 0) this.intentarInteractuar();
         };
+
+        window.addEventListener("keydown", (evt) => {
+            const letra = evt.key;
+            if(letra == "e" || letra == "E"){
+                this.intentarInteractuar();
+            }
+        })
     }
 
     crearCamaraPrimeraPersona() {
-        const camara = new BABYLON.UniversalCamera("camaraJugador", new BABYLON.Vector3(10, 7, 0), this.scene);
+        const camara = new BABYLON.UniversalCamera("camaraJugador", new BABYLON.Vector3(10, 4, 0), this.scene);
 
         camara.attachControl(this.canvas, true);
         camara.speed = 3.0;
@@ -38,22 +45,24 @@ export default class Jugador {
         camara.applyGravity = true;    
 
         camara.ellipsoid = new BABYLON.Vector3(1, 2.5, 1); 
+        camara.ellipsoidOffset = new BABYLON.Vector3(0, -1.5, 1)
 
         // Evitar recortes visuales
         camara.minZ = 0.1;
+
+        this.canvas.addEventListener("click", () => {
+            this.canvas.requestPointerLock();
+        })
 
         this.camera = camara;
     }
 
     intentarInteractuar() {
-        const ray = this.camera.getForwardRay(4); // Rayo de 3 metros
-        const hit = this.scene.pickWithRay(ray);
-
-        if (hit.hit && hit.pickedMesh) {
-            console.log("Golpeé a: " + hit.pickedMesh.name);
-            if (hit.pickedMesh.metadata && hit.pickedMesh.metadata.interactable) {
-                hit.pickedMesh.metadata.interactable.interactuar();
+        this.departamento.interactuables.forEach(objeto => {
+            const distancia = BABYLON.Vector3.Distance(this.camera.position, objeto.mesh.position)
+            if(distancia <= 5){
+                objeto.interactuar()
             }
-        }
+        });
     }
 }
