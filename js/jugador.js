@@ -2,15 +2,28 @@ export default class Jugador {
     constructor(scene, canvas, GameManager) {
         this.scene = scene;
         this.canvas = canvas;
-        this.GameManager = GameManager
+        this.GameManager = GameManager;
+        
+        // IMPORTANTE: Asegúrate de asignar esto desde tu Main o GameManager después de crear el jugador
+        // Ej: jugador.departamento = departamento;
+        this.departamento = null; 
 
         // 1. Crear la cámara
         this.crearCamaraPrimeraPersona();
 
-        // 2. Configurar el "Rayo" para interactuar (lo que hicimos antes)
+        this.uiInteraccion = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI_E");
+        this.iconoInteractuar = new BABYLON.GUI.Image("iconoE", "../assets/Resources/boton_E.png"); 
+        // ^^^ Asegúrate que la ruta coincida con tu carpeta ^^^
+
+        this.iconoInteractuar.width = "300px";  // Ajusta el tamaño según tu imagen
+        this.iconoInteractuar.height = "300px";
+        this.iconoInteractuar.isVisible = false; // Empieza oculto
+        this.uiInteraccion.addControl(this.iconoInteractuar);
+
+        // 2. Rayo de interacción (Radar constante)
         this.scene.registerBeforeRender(() => {
-            // Aquí podrías llamar a tu función de detectar si la necesitas
-            // this.detectarObjeto(); 
+            // --- CORRECCIÓN 2: Llamamos a la función todo el tiempo ---
+            this.checarRadar();
         });
 
         this.scene.onPointerDown = (evt) => {
@@ -31,7 +44,6 @@ export default class Jugador {
         camara.attachControl(this.canvas, true);
         camara.speed = 3.0;
         camara.angularSensibility = 1000; 
-        
         camara.inertia = 0.1;
 
         // --- TECLAS WASD ---
@@ -40,7 +52,7 @@ export default class Jugador {
         camara.keysLeft = [65];  // A
         camara.keysRight = [68]; // D
 
-        // fisica
+        // Fisica
         camara.checkCollisions = true; 
         camara.applyGravity = true;    
 
@@ -57,11 +69,33 @@ export default class Jugador {
         this.camera = camara;
     }
 
+    // --- NUEVA FUNCIÓN: EL RADAR VISUAL ---
+    checarRadar() {
+        // Seguridad: Si no hemos definido el departamento o no hay objetos, no hagas nada
+        if (!this.departamento || !this.departamento.interactuables) return;
+
+        let algunObjetoCerca = false;
+
+        // Revisamos todos los objetos. Si al menos UNO está cerca, mostramos la E
+        this.departamento.interactuables.forEach(objeto => {
+            if (objeto.mesh) { // Asegurar que el objeto tiene malla
+                const distancia = BABYLON.Vector3.Distance(this.camera.position, objeto.mesh.position);
+                if (distancia <= 5) {
+                    algunObjetoCerca = true;
+                }
+            }
+        });
+        this.iconoInteractuar.isVisible = algunObjetoCerca;
+    }
+
     intentarInteractuar() {
+        // Seguridad por si intentas interactuar antes de que cargue el nivel
+        if (!this.departamento || !this.departamento.interactuables) return;
+
         this.departamento.interactuables.forEach(objeto => {
             const distancia = BABYLON.Vector3.Distance(this.camera.position, objeto.mesh.position)
             if(distancia <= 5){
-                objeto.interactuar()
+                objeto.interactuar(); // <--- Esto llama a la función del objeto (Refri, Luz, etc)
             }
         });
     }

@@ -14,6 +14,12 @@ body{
     width: 100%;
 }
 
+/* En tu archivo CSS */
+@font-face {
+    font-family: 'FuenteJuego';  /* El nombre que tú inventes para usar en código */
+    src: url('../assets/Fonts/URBAN\ SPRAY.ttf'); /* La ruta al archivo */
+}
+
 /*Aqui estaran todos los estilos de las distintas paginas del juego se separaran por un comenario
 que indique a que pagina corresponde y en donde termina*/
 
