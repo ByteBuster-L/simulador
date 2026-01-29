@@ -12,7 +12,7 @@ export default class Jugador {
         this.crearCamaraPrimeraPersona();
 
         this.uiInteraccion = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI_E");
-        this.iconoInteractuar = new BABYLON.GUI.Image("iconoE", "../assets/Resources/boton_E.png"); 
+        this.iconoInteractuar = new BABYLON.GUI.Image("iconoE", "../assets/Resources/boton_E_Azul.png"); 
         // ^^^ Asegúrate que la ruta coincida con tu carpeta ^^^
 
         this.iconoInteractuar.width = "300px";  // Ajusta el tamaño según tu imagen

@@ -12,7 +12,12 @@ export default class GameManager {
         this.precioLuz = 0.5; 
         this.precioAgua = 0.2; 
 
-        // --- TIEMPO DEL JUEGO ---
+        //Refrigerador
+        this.consumoRefri = 0.6; // kW por segundo (gasta constante)
+        this.calculoRefri = this.consumoRefri * 0.7
+        this.costoRefri = this.calculoRefri;
+
+        // Tiempo de juego
         this.tiempoRestante = 180; // 3 Minutos (en segundos)
         this.juegoActivo = true; // Interruptor general
         
@@ -51,6 +56,9 @@ export default class GameManager {
             this.consumoAgua += (this.grifosActivos.length * 1.5);
             this.costoTotal += (this.grifosActivos.length * this.precioAgua);
         }
+
+        this.consumoLuz += this.consumoRefri;
+        this.costoTotal += this.costoRefri;
 
         // 2. Restar tiempo
         this.tiempoRestante--;
