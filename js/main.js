@@ -14,7 +14,7 @@ scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 scene.collisionsEnabled = true;
 
 const luz = new BABYLON.HemisphericLight("Luz", new BABYLON.Vector3(0,1,0), scene);
-luz.intensity = 0.001;
+luz.intensity = 0.01;
 
 const gameManager = new GameManager(); 
 
