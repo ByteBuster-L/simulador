@@ -5,15 +5,16 @@ export default class SistemaDialogos {
         this.scene = scene;
         this.dialogoActivo = false;
         
+        this.rutaAssets = "../../Assets/dialog/"; 
         this.cuadrosDialogo = {
             "Artorius": "dialogo_Artorius.png",
         };
-        this.rutaAssets = "../../Assets/dialog/"; 
 
+        this.rutaPersonajes = "../../Assets/personajes/";
         this.imagenesCaras = {
             "Artorius": "Artorius.png"
         };
-        this.rutaPersonajes = "../../Assets/personajes/";
+        
         
         // Estado interno
         this.colaDialogos = [];
