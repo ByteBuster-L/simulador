@@ -30,9 +30,8 @@ const sistemaDialogos = new SistemaDialogos(scene);
 // 2. Trigger para empezar (ej. al iniciar el nivel)
 sistemaDialogos.iniciar(dialogoTutorial);
 
-// 3. Input para avanzar (Agrégalo a tu listener de teclado existente)
+// 3. Input para avanzar 
 window.addEventListener("keydown", (ev) => {
-    // Si hay un diálogo activo, la tecla ENTER avanza el texto
     if (sistemaDialogos.dialogoActivo && (ev.key === "Enter" || ev.key === " ")) {
         sistemaDialogos.siguiente();
     }
