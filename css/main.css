@@ -16,7 +16,7 @@ body{
 
 /* En tu archivo CSS */
 @font-face {
-    font-family: 'FuenteJuego';  /* El nombre que tú inventes para usar en código */
+    font-family: 'FuenteJuego';  
     src: url('../Assets/Fonts/UrbanSpray.ttf'); /* La ruta al archivo */
 }
 

@@ -4,13 +4,13 @@ export default class SistemaDialogos {
     constructor(scene) {
         this.scene = scene;
         this.dialogoActivo = false;
-        
-        this.rutaAssets = "../../Assets/dialog/"; 
+
+        this.rutaAssets = "../Assets/dialog/"; 
         this.cuadrosDialogo = {
-            "Artorius": "dialogo_Artorius.png",
+            "Artorius": "dialogo_Artorius.png"
         };
 
-        this.rutaPersonajes = "../../Assets/personajes/";
+        this.rutaPersonajes = "../Assets/personajes/";
         this.imagenesCaras = {
             "Artorius": "Artorius.png"
         };
